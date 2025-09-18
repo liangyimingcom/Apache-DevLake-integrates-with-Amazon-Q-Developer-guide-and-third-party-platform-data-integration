@@ -1,0 +1,57 @@
+version: "3"
+services:
+  mysql:
+    image: mysql:8.0.26
+    volumes:
+      - ./mysql:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"  # 开放MySQL端口供外部访问
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: lake
+      MYSQL_USER: merico
+      MYSQL_PASSWORD: merico
+    command: --character-set-server=utf8mb4
+      --collation-server=utf8mb4_bin
+
+  grafana:
+    image: apache/devlake-dashboard:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      GF_USERS_DEFAULT_THEME: "light"
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+      MYSQL_URL: mysql:3306
+      MYSQL_DATABASE: lake
+      MYSQL_USER: merico
+      MYSQL_PASSWORD: merico
+    restart: always
+    depends_on:
+      - mysql
+
+  devlake:
+    image: apache/devlake:latest
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      DB_URL: "mysql://merico:merico@mysql:3306/lake?charset=utf8mb4&parseTime=True&loc=Local"
+      PORT: 8080
+      ENCRYPTION_SECRET: "<YOUR-ENCRYPTION-SECRET>"
+    depends_on:
+      - mysql
+
+  config-ui:
+    image: apache/devlake-config-ui:latest
+    ports:
+      - "4000:4000"
+    environment:
+      GRAFANA_ENDPOINT: http://grafana:3000
+      DEVLAKE_ENDPOINT: http://devlake:8080
+    depends_on:
+      - devlake

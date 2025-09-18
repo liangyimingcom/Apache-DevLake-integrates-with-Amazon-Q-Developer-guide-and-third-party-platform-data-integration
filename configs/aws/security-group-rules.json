@@ -1,0 +1,67 @@
+{
+  "SecurityGroupName": "devlake-sg",
+  "Description": "Security group for DevLake deployment",
+  "InboundRules": [
+    {
+      "IpProtocol": "tcp",
+      "FromPort": 22,
+      "ToPort": 22,
+      "CidrIp": "YOUR_IP/32",
+      "Description": "SSH access"
+    },
+    {
+      "IpProtocol": "tcp", 
+      "FromPort": 80,
+      "ToPort": 80,
+      "CidrIp": "0.0.0.0/0",
+      "Description": "HTTP access"
+    },
+    {
+      "IpProtocol": "tcp",
+      "FromPort": 443, 
+      "ToPort": 443,
+      "CidrIp": "0.0.0.0/0",
+      "Description": "HTTPS access"
+    },
+    {
+      "IpProtocol": "tcp",
+      "FromPort": 3000,
+      "ToPort": 3000, 
+      "CidrIp": "YOUR_IP/32",
+      "Description": "Grafana dashboard"
+    },
+    {
+      "IpProtocol": "tcp",
+      "FromPort": 4000,
+      "ToPort": 4000,
+      "CidrIp": "YOUR_IP/32", 
+      "Description": "DevLake Config UI"
+    },
+    {
+      "IpProtocol": "tcp",
+      "FromPort": 8080,
+      "ToPort": 8080,
+      "CidrIp": "0.0.0.0/0",
+      "Description": "DevLake API"
+    },
+    {
+      "IpProtocol": "tcp",
+      "FromPort": 3306,
+      "ToPort": 3306,
+      "CidrIp": "YOUR_IP/32",
+      "Description": "MySQL database (optional for direct access)"
+    }
+  ],
+  "OutboundRules": [
+    {
+      "IpProtocol": "-1",
+      "CidrIp": "0.0.0.0/0",
+      "Description": "All outbound traffic"
+    }
+  ],
+  "Notes": [
+    "Replace YOUR_IP with your actual public IP address",
+    "MySQL port 3306 is optional and only needed for direct database access",
+    "Consider restricting access further in production environments"
+  ]
+}
